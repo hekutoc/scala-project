@@ -20,16 +20,29 @@ object Webserver extends IOApp {
     // curl -X POST "localhost:9003/plan" --header "Content-Type: application/json" --data "{\"test\":\"xyz\"}"
     case req@POST -> Root / "plan" =>
       req.as[RouteConfig2].flatMap { cnf =>
-        Ok("started" + cnf.test)
+        val newId = Math.random().toString
+        val rc = RouteConfig.default
+        val item = Task.Item(newId, TaskItemStatus.Pending, rc)
+        TaskStore.add(item)
+        Runner.run(item)
+        val reason: String = s"call to see response >> curl 'localhost:9003/route/${item.id}'"
+        Ok(reason)
       }
 
 
-    case GET -> Root / "route" / routeId =>Ok("")
+    case GET -> Root / "route" / routeId => {
+      TaskStore.get(routeId) match {
+        case None => NotFound()
+        case Some(v) => Ok(v.id+" "+v.status+" "+v.pointSequence)
+      }
+    }
   }
 
   private[routePlanner] val httpApp = {
     routes
   }.orNotFound
+
+
 
   override def run(args: List[String]): IO[ExitCode] = BlazeServerBuilder[IO](ExecutionContext.global)
     .bindHttp(port = 9003, host = "localhost")

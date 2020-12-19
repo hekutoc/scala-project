@@ -44,6 +44,10 @@ class RouteMaker(
 
   println("Fin")
 
+  def getOutput() = {
+    (startSeq ++ checkpoint ++ finishSeq).map(p => p.id)
+  }
+
 
   def dropHeaviest(points: Seq[RoutePoint]): Seq[RoutePoint] = {
     val maxWeightIdx = getDropWeights(points).zipWithIndex.maxBy(_._1)._2
