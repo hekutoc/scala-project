@@ -1,31 +1,35 @@
 package lv.martovs.routePlanner.store
 
+import java.util.concurrent.atomic.AtomicReference
+
 import scala.collection.mutable.ListBuffer
 
 class Storage {
-  // TODO make thread safe?
   type It = Task.Item
   type Id = Task.Id
 
-  val store: ListBuffer[It] = new ListBuffer[It]()
+  val store: AtomicReference[ListBuffer[It]] = new AtomicReference[ListBuffer[It]](new ListBuffer[It]())
 
   def add(item: It): Unit = {
-    store.append(item)
+    store.updateAndGet(list => list.append(item))
   }
 
   def get(id: Id): Option[It] = {
-    store.find(item => item.id == id)
+    store.get().find(item => item.id == id)
   }
 
   def update(id: Id, newValue: It): Unit = {
-    store.indexWhere(item => item.id == id) match {
-      case -1 => ()
-      case idx => store.update(idx, newValue)
-    }
+    store.updateAndGet(list => {
+      list.indexWhere(item => item.id == id) match {
+        case -1 => ()
+        case idx => list.update(idx, newValue)
+      }
+      list
+    })
   }
 
   def getPending(): Set[Task.Item] = {
-    store.filter(it => it.status == TaskItemStatus.Pending).toSet
+    store.get().filter(it => it.status == TaskItemStatus.Pending).toSet
   }
 }
 

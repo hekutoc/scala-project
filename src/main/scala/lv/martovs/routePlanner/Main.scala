@@ -1,6 +1,6 @@
 package lv.martovs.routePlanner
 
-import lv.martovs.routePlanner.distanceService.{DirectDistanceService, DistanceService, OSRMDistanceService}
+import lv.martovs.routePlanner.distanceService.{DirectDistanceService, DistanceService, OsrmDistanceService}
 import lv.martovs.routePlanner.metrics.DistanceMetric
 
 object Main extends App {
@@ -31,16 +31,21 @@ object Main extends App {
     RoutePoint("20", 56.507844, 24.100485, 105),
   )
 
-  val pds2 = new OSRMDistanceService(points)
+  OsrmDistanceService.initForPoints(points) match {
+    case None => println("API failed")
+    case Some(pds2) => {
 
-  val routeConfig = RouteConfig(
-    lockedStartPointIds = Seq("Start"),
-    lockedFinishPointIds = Seq("Finish"),
-    points = points,
-    1 * 60 * 60,
-  )
+      val routeConfig = RouteConfig(
+        lockedStartPointIds = Seq("Start"),
+        lockedFinishPointIds = Seq("Finish"),
+        points = points,
+        1 * 60 * 60,
+        iterationCount = 100,
+        mutationCount = 100
+      )
 
-  var rm = RouteOptimizer.optimize(routeConfig, pds2, Mutator.mutate[RoutePoint], DistanceMetric)
+      var rm = RouteOptimizer.optimize(routeConfig, pds2, Mutator.mutate[RoutePoint], DistanceMetric)
+    }
+  }
 }
-
 

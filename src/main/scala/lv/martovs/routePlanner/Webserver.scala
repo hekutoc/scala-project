@@ -9,6 +9,7 @@ import org.http4s.implicits._
 import org.http4s.server.blaze.BlazeServerBuilder
 
 import scala.concurrent.ExecutionContext
+import scala.util.Random
 
 
 //final case class RouteConfig2(test: String)
@@ -17,16 +18,16 @@ import scala.concurrent.ExecutionContext
 case class ApiPlanResponse(routeId: String)
 
 object Webserver extends IOApp {
+
   import io.circe.generic.auto._
   import org.http4s.circe.CirceEntityCodec._
-  import lv.martovs.routePlanner.store.XX._
+  import lv.martovs.routePlanner.store.Task._
 
   private val routes = HttpRoutes.of[IO] {
     // curl -X POST "localhost:9003/plan" --header "Content-Type: application/json" --data "{\"test\":\"xyz\"}"
     case req@POST -> Root / "api" / "plan" =>
       req.as[RouteConfig].flatMap { cnf =>
-        println(cnf)
-        val newId = Math.random().toString
+        val newId = randomAlphaNumericString(10)
         val item = Task.Item(newId, TaskItemStatus.Pending, cnf)
         TaskStore.add(item)
         Runner.notify(TaskStore)
@@ -40,16 +41,28 @@ object Webserver extends IOApp {
         case Some(v) => Ok(v.asInstanceOf[Task.Item].asJson)
       }
     }
-    case _ => {
-      println("Smth else")
-      NotFound()
-    }
-
+    case _ =>       NotFound()
   }
 
   private[routePlanner] val httpApp = {
     routes
   }.orNotFound
+
+
+  def randomAlphaNumericString(length: Int): String = {
+    def randomStringFromCharList(length: Int, chars: Seq[Char]): String = {
+      val sb = new StringBuilder
+      for (i <- 1 to length) {
+        val randomNum = Random.nextInt(chars.length)
+        sb.append(chars(randomNum))
+      }
+      sb.toString
+    }
+
+
+    val chars = ('a' to 'z') ++ ('A' to 'Z') ++ ('0' to '9')
+    randomStringFromCharList(length, chars)
+  }
 
 
   override def run(args: List[String]): IO[ExitCode] = BlazeServerBuilder[IO](ExecutionContext.global)

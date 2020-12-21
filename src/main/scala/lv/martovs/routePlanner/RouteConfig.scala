@@ -4,7 +4,9 @@ case class RouteConfig(
                         lockedStartPointIds: Seq[String],
                         lockedFinishPointIds: Seq[String],
                         points: Set[RoutePoint],
-                        timeLimitSeconds: Long
+                        timeLimitSeconds: Long,
+                        iterationCount: Long,
+                        mutationCount: Long
                       )
 
 object RouteConfig {
@@ -36,6 +38,8 @@ object RouteConfig {
       RoutePoint("20", 56.507844, 24.100485, 105),
     ),
     5 * 60 * 60,
+    mutationCount = 100,
+    iterationCount = 100
   )
 
 }

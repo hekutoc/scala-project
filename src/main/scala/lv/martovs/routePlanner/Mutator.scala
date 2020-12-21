@@ -26,13 +26,16 @@ object Mutator {
       points.slice(0, a) ++ points.slice(a, b).reverse ++ points.slice(b, points.size)
     }
 
-    def nop(points: Seq[A]): Seq[A] = {
-      points
+    def drop(points: Seq[A]): Seq[A] = {
+      val a = scala.util.Random.between(0, points.size)
+      points.slice(0, a) ++ points.slice(a+1, points.size)
     }
 
-    scala.util.Random.between(0, 1.0) match {
-      case n if n < 0.75 => flip(points)
-      case n => nop(points)
-    }
+    flip(points)
+
+//    scala.util.Random.between(0, 1.0) match {
+//      case n if n < 0.90 => flip(points)
+//      case n => drop(points)
+//    }
   }
 }

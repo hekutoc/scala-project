@@ -6,6 +6,7 @@ import io.circe.generic.semiauto.deriveEncoder
 import io.circe.syntax.EncoderOps
 import lv.martovs.routePlanner.RouteConfig
 import io.circe.generic.auto._
+import lv.martovs.routePlanner.RouteOptimizer.OptimalRoute
 
 sealed trait TaskItemStatus
 
@@ -23,12 +24,8 @@ object Task {
                    id: Id,
                    status: TaskItemStatus,
                    config: RouteConfig,
-                   pointSequence: Option[Seq[String]] = None
+                   optimalRoute: Option[OptimalRoute] = None
                  )
-
-}
-
-object XX {
 
   implicit val encoderTaskItemStatus: Encoder[TaskItemStatus] = {
     case TaskItemStatus.Pending => "pending".asJson
