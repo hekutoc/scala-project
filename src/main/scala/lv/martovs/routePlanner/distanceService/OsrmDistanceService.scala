@@ -15,6 +15,7 @@ object OsrmDistanceService {
   def initForPoints(points: Set[RoutePoint]): Option[OsrmDistanceService] = {
     val pointsOrdered: Seq[RoutePoint] = points.toSeq
     val matrix: Option[List[List[Double]]] = getMatrix(pointsOrdered.map(p => Point(p.latitude, p.longitude)))
+    println(matrix)
     matrix.map(m => new OsrmDistanceService(m, pointsOrdered))
   }
 }

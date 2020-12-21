@@ -2,7 +2,6 @@ package lv.martovs.routePlanner
 
 object Mutator {
   def mutate[A](points: Seq[A]): Seq[A] = {
-
     def pickAB(size: Int): (Int, Int) = {
       /*
       * A B C D E F G H
@@ -31,11 +30,9 @@ object Mutator {
       points.slice(0, a) ++ points.slice(a+1, points.size)
     }
 
-    flip(points)
-
-//    scala.util.Random.between(0, 1.0) match {
-//      case n if n < 0.90 => flip(points)
-//      case n => drop(points)
-//    }
+    scala.util.Random.between(0, 1.0) match {
+      case n if n < 0.90 => flip(points)
+      case n => flip(flip(points))
+    }
   }
 }

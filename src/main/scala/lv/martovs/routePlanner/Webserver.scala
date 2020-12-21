@@ -12,9 +12,6 @@ import scala.concurrent.ExecutionContext
 import scala.util.Random
 
 
-//final case class RouteConfig2(test: String)
-
-
 case class ApiPlanResponse(routeId: String)
 
 object Webserver extends IOApp {
@@ -24,7 +21,7 @@ object Webserver extends IOApp {
   import lv.martovs.routePlanner.store.Task._
 
   private val routes = HttpRoutes.of[IO] {
-    // curl -X POST "localhost:9003/plan" --header "Content-Type: application/json" --data "{\"test\":\"xyz\"}"
+
     case req@POST -> Root / "api" / "plan" =>
       req.as[RouteConfig].flatMap { cnf =>
         val newId = randomAlphaNumericString(10)
@@ -33,7 +30,6 @@ object Webserver extends IOApp {
         Runner.notify(TaskStore)
         Ok(ApiPlanResponse(item.id).asJson)
       }
-
 
     case GET -> Root / "api" / "route" / routeId => {
       TaskStore.get(routeId) match {
