@@ -1,4 +1,4 @@
-package lv.martovs.routePlanner
+package lv.martovs.routePlanner.distanceService
 
 import io.circe.generic.JsonCodec
 import io.circe.parser.decode
@@ -9,7 +9,7 @@ object OSRM_API {
   @JsonCodec final case class Scoreboard(durations: List[List[Double]], code: String)
 
   case class Point(lat: Double, lon: Double) {
-    override def toString: String = Seq(lat, lon).mkString(",")
+    override def toString: String = Seq(lon, lat).mkString(",")
   }
 
 

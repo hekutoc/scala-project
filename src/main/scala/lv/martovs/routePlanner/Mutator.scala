@@ -1,6 +1,6 @@
 package lv.martovs.routePlanner
 
-object Mutators {
+object Mutator {
   def mutate[A](points: Seq[A]): Seq[A] = {
 
     def pickAB(size: Int): (Int, Int) = {

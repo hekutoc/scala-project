@@ -1,15 +1,18 @@
-package lv.martovs.routePlanner
+package lv.martovs.routePlanner.metrics
+
+import lv.martovs.routePlanner.RoutePoint
+import lv.martovs.routePlanner.distanceService.DistanceService
 
 
 sealed trait Metric[S <: Double] {
-  def eval(pds: PointDistanceService, points: Seq[RoutePoint]): S
+  def eval(pds: DistanceService, points: Seq[RoutePoint]): S
   def evalScore(points: Seq[RoutePoint]): Double
   def max: S
 
 }
 object DistanceMetric extends Metric[Double] {
 
-  def eval(pds: PointDistanceService, points: Seq[RoutePoint]): Double = {
+  def eval(pds: DistanceService, points: Seq[RoutePoint]): Double = {
     val pairs = pairZip(points)
     val consumption = pairs.map({
       case (p1, p2) => pds.distanceBetween(p1, p2)

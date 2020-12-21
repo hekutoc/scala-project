@@ -1,31 +1,6 @@
-package lv.martovs.routePlanner
+package lv.martovs.routePlanner.store
 
 import scala.collection.mutable.ListBuffer
-
-sealed trait TaskItemStatus
-
-object TaskItemStatus {
-
-  final case object Pending extends TaskItemStatus
-
-  final case object Running extends TaskItemStatus
-
-  final case object Improving extends TaskItemStatus
-
-  final case object Stopped extends TaskItemStatus
-
-}
-
-trait WithId[A] {
-  def id: A
-}
-
-object Task {
-  type Id = String
-
-  case class Item(id: Id, status: TaskItemStatus, config: RouteConfig, pointSequence: Option[Seq[String]] = None) extends WithId[Id]
-
-}
 
 class Storage {
   // TODO make thread safe?
@@ -53,6 +28,5 @@ class Storage {
     store.filter(it => it.status == TaskItemStatus.Pending).toSet
   }
 }
-
 
 object TaskStore extends Storage

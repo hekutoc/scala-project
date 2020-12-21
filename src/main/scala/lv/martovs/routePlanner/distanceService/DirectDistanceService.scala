@@ -1,11 +1,8 @@
-package lv.martovs.routePlanner
+package lv.martovs.routePlanner.distanceService
 
+import lv.martovs.routePlanner.RoutePoint
 
-trait PointDistanceService {
-  def distanceBetween(p1: RoutePoint, p2: RoutePoint): Double
-}
-
-class PointDistanceDirect extends PointDistanceService {
+class DirectDistanceService extends DistanceService {
   override def distanceBetween(p1: RoutePoint, p2: RoutePoint): Double = {
     val lon1: Double = Math.toRadians(p1.longitude);
     val lon2: Double = Math.toRadians(p2.longitude);
