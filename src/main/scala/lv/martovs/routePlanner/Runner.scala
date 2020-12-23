@@ -20,7 +20,7 @@ object Runner {
     Future[Unit] {
       OsrmDistanceService.initForPoints(task.config.points) match {
         case None => Future.failed(new RuntimeException("API error"))
-        case Some(distanceService) => {
+        case Some(distanceService) =>
           for (i <- 0L to task.config.iterationCount) {
             val rm = RouteOptimizer.optimize(task.config, distanceService, Mutator.mutate[RoutePoint], DistanceMetric)
             if (i == 0 || {
@@ -33,7 +33,6 @@ object Runner {
           }
           store.update(task.id, store.get(task.id).get.copy(status = TaskItemStatus.Stopped))
           Future.successful()
-        }
       }
     }
   }
